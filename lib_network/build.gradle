@@ -1,0 +1,67 @@
+apply plugin: 'com.android.library'
+apply plugin: 'com.alibaba.arouter'
+
+android {
+    compileSdkVersion rootProject.android.compileSdkVersion
+    buildToolsVersion rootProject.android.buildToolsVersion
+
+    defaultConfig {
+        minSdkVersion rootProject.android.minSdkVersion
+        targetSdkVersion rootProject.android.targetSdkVersion
+        versionCode 1
+        versionName "1.0"
+
+//        consumerProguardFiles 'consumer-rules.pro'
+        //ARouter配置
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = [AROUTER_MODULE_NAME: project.getName(), AROUTER_GENERATE_DOC: "enable"]
+            }
+        }
+    }
+
+    dexOptions {
+        jumboMode = rootProject.android.multiDexEnabled
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility 1.8
+        targetCompatibility 1.8
+    }
+
+
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    compileOnly project(':lib_base')
+
+    compileOnly rootProject.depsLibs.appcompact
+    api rootProject.depsLibs.retrofit
+    //有问题，回头换成占位编译
+    api rootProject.depsLibs.gson
+    api rootProject.depsLibs.okhttp
+    api rootProject.depsLibs.okio
+    api rootProject.depsLibs.interceptor
+    api rootProject.depsLibs.converter_gson
+    api rootProject.depsLibs.adapter_rxjava
+    compileOnly rootProject.depsLibs.rxjava
+    compileOnly rootProject.depsLibs.rxandroid
+    compileOnly rootProject.depsLibs.auto_dispose
+    compileOnly rootProject.depsLibs.ad_lifecycle
+    compileOnly rootProject.depsLibs.ad_x_lifecycle
+
+    //ARouter库
+    compileOnly(rootProject.depsLibs.arouterapi) {
+        exclude group: 'com.android.support'
+    }
+    annotationProcessor rootProject.depsLibs.aroutercompiler
+
+}
