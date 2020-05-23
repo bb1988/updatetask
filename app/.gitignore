@@ -1,0 +1,11 @@
+.idea/
+.gradle/
+build
+app/build/
+app/release/
+app/.externalNativeBuild/
+captures
+app/build
+*.iws
+*.iml
+local.properties

@@ -1,0 +1,5 @@
+rootProject.name='updatetask'
+include ':app'
+include ':lib_network'
+include ':lib_common_ui'
+include ':lib_base'
