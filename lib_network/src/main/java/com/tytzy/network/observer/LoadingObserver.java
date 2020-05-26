@@ -2,6 +2,7 @@ package com.tytzy.network.observer;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.util.Log;
 
 import com.alibaba.android.arouter.facade.annotation.Autowired;
 import com.alibaba.android.arouter.launcher.ARouter;
@@ -31,8 +32,7 @@ public abstract class LoadingObserver<T, E> extends DisposableObserver<T> implem
     private String msg;
     private Dialog dialog;
     private boolean canShowDialog;
-    @Autowired(name = "/ui/LoadingDialog")
-    LoadingDialog loadingDialog;
+    private LoadingDialog loadingDialog;
 
     public LoadingObserver(Context context) {
         init(context, "", false);
@@ -50,7 +50,7 @@ public abstract class LoadingObserver<T, E> extends DisposableObserver<T> implem
         this.context = context;
         this.msg = msg;
         this.canShowDialog = canShowDialog;
-        ARouter.getInstance().inject(this);
+        loadingDialog = ARouter.getInstance().navigation(LoadingDialog.class);
     }
 
     private void showProgressDialog() {
@@ -117,9 +117,11 @@ public abstract class LoadingObserver<T, E> extends DisposableObserver<T> implem
         if (canShowDialog) {
             dismissProgressDialog();
         }
-        unsubscribe();
+        e.printStackTrace();
         ResponseThrowable rError = ExceptionHandle.handleException(e);
-        ToastUtils.showShort(rError.message);
+//        ToastUtils.showShort(rError.message);
+//        Log.e("onError",e.getMessage());
+        unsubscribe();
     }
 
     /**

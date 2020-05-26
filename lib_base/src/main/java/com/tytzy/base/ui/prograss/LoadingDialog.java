@@ -20,7 +20,7 @@ public interface LoadingDialog extends IProvider {
      * @param baseLoadingCancelListener
      * @Description:
      */
-    public Dialog createLoadingDialog(Context context, String msg, final LoadingCancelListener loadingCancelListener);
+     Dialog createLoadingDialog(Context context, String msg, final LoadingCancelListener loadingCancelListener);
 
     /**
      * @Author: Baibo
@@ -28,5 +28,5 @@ public interface LoadingDialog extends IProvider {
      * @param mDialogUtils
      * @Description:关闭
      */
-    public void closeDialog(Dialog mDialogUtils);
+     void closeDialog(Dialog mDialogUtils);
 }

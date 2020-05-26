@@ -1,8 +1,23 @@
 package com.bb.updatetask;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleOwner;
+import autodispose2.AutoDispose;
 import autodispose2.AutoDisposeConverter;
+import autodispose2.androidx.lifecycle.AndroidLifecycleScopeProvider;
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
+import retrofit2.http.Body;
+import retrofit2.http.GET;
+import retrofit2.http.Headers;
+import retrofit2.http.POST;
+import retrofit2.http.Streaming;
+import retrofit2.http.Url;
 
 import android.Manifest;
 import android.annotation.TargetApi;
@@ -14,26 +29,39 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.alibaba.android.arouter.facade.annotation.Autowired;
+import com.alibaba.android.arouter.launcher.ARouter;
 import com.google.android.flexbox.FlexDirection;
 import com.google.android.flexbox.FlexboxLayoutManager;
+import com.tytzy.base.ui.prograss.LoadingCancelListener;
+import com.tytzy.base.ui.prograss.LoadingDialog;
 import com.tytzy.network.DownLoadManager;
 import com.tytzy.network.NetWork;
 import com.tytzy.network.observer.DownLoadObserver;
+import com.tytzy.network.observer.LoadingObserver;
 import com.tytzy.network.response.BaseResponse;
 import com.yanzhenjie.permission.Action;
 import com.yanzhenjie.permission.AndPermission;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.File;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements LoadingCancelListener {
     private Button button;
     private TextView textView;
+    private File file;
+
+    @Autowired(name = "/ui/loading_dialog")
+    protected LoadingDialog loadingDialog;
 
     private final String[] PERMISSIONS = new String[]{
 //            //读写存储卡
@@ -65,21 +93,22 @@ public class MainActivity extends AppCompatActivity {
         textView = findViewById(R.id.textview);
         requestPermission();
         NetWork.init(this)
-                .baseUrl("")
-                .withCache(true)
+                .baseUrl("http://192.168.10.248:8116")
                 .connectTimeout(10)
-                .headers("key1","value1")
-                .headers("key2","value2")
                 .withLog(true)
                 .go();
 
+        File dir = new File(getExternalFilesDir(null).getAbsolutePath());
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
 
-//        DownLoadManager.init(this).downLoad("", new DownLoadObserver<ResponseBody>() {
-//            @Override
-//            public void onProgress(int percent, boolean done) {
-//
-//            }
-//        },new File("1111"));
+        file = new File(dir, "test.apk");
+
+
+        ARouter.getInstance().inject(this);
+
+
 
 //        NetWork.create(Appservice).dosomeThing();
 
@@ -116,12 +145,53 @@ public class MainActivity extends AppCompatActivity {
 
     public void clickAlert(View view){
 //        goToUpdateApk(MainActivity.this,"cn.com.codeteenager.accessibilityapp");
-        Intent it = new Intent(this, DetecterActivity.class);
-        it.putExtra("readpath", Environment.getExternalStorageDirectory() + File.separator + "FaceDB" + File.separator);
-        it.putExtra("time", 30 * 1000);//超时时间30s,单位ms
-        startActivity(it);
+//        Intent it = new Intent(this, DetecterActivity.class);
+//        it.putExtra("readpath", Environment.getExternalStorageDirectory() + File.separator + "FaceDB" + File.separator);
+//        it.putExtra("time", 30 * 1000);//超时时间30s,单位ms
+//        startActivity(it);
 
 
+        //下载方法测试
+//        DownLoadManager.init(this).downLoad("/appPath/04ede9fe-6ff3-4713-972e-65b06b0fce71.apk", new DownLoadObserver<ResponseBody>() {
+//            @Override
+//            public void onProgress(int percent, boolean done) {
+//                Log.e("onProgress","进度======================="+percent+"%,是否完成："+done);
+//            }
+//        },file);
+
+        JSONObject obj = new JSONObject();
+        try {
+            obj.put("username", "张甜");
+            obj.put("password", "123456");
+            obj.put("imei", "357092061466849");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        //普通连接测试
+        RequestBody requestBody = RequestBody.create(obj.toString(),
+                MediaType.parse("Content-Type, application/json"));
+
+        login(new LoadingObserver<BaseResponse<UserInfoEntity>, UserInfoEntity>(this,true) {
+            @Override
+            public void onResult(UserInfoEntity t) {
+                Log.e("UserInfoEntity",t.getAvatar());
+                Log.e("UserInfoEntity",t.getInfoMap().getCity());
+            }
+        }, requestBody);
+
+
+//        loadingDialog.createLoadingDialog(this,"",this::onCancelProgress).show();
+
+    }
+
+    public void login(LoadingObserver<BaseResponse<UserInfoEntity>,UserInfoEntity> loadingObserver,RequestBody requestBody) {
+        NetWork.create(LoginService.class,"http://192.168.10.248:8116").login(requestBody)
+                .subscribeOn(Schedulers.io())
+                .unsubscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .to(AutoDispose.autoDisposable(AndroidLifecycleScopeProvider.from( this, Lifecycle.Event.ON_DESTROY)))
+                .subscribe(loadingObserver);
     }
 
 
@@ -219,6 +289,19 @@ public class MainActivity extends AppCompatActivity {
         for (ActivityManager.AppTask appTask : appTaskList) {
             appTask.finishAndRemoveTask();
         }
+    }
+
+    @Override
+    public void onCancelProgress() {
+
+    }
+
+    private interface LoginService {
+
+
+        @Headers({"Content-Type: application/json","Accept: application/json"})//需要添加头
+        @POST("/sso/appLogin")
+        Observable<BaseResponse<UserInfoEntity>> login(@Body RequestBody body);
     }
 
 

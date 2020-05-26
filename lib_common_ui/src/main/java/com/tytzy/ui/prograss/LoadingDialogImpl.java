@@ -23,7 +23,7 @@ import com.tytzy.ui.R;
  * @param
  * @Description:基础进度条弹窗
  */
-@Route(path = "/ui/LoadingDialog")
+@Route(path = "/ui/loading_dialog")
 public class LoadingDialogImpl implements LoadingDialog {
 
     /**
