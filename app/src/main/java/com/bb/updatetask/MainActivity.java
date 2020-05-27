@@ -298,7 +298,6 @@ public class MainActivity extends AppCompatActivity implements LoadingCancelList
 
     private interface LoginService {
 
-
         @Headers({"Content-Type: application/json","Accept: application/json"})//需要添加头
         @POST("/sso/appLogin")
         Observable<BaseResponse<UserInfoEntity>> login(@Body RequestBody body);

@@ -385,6 +385,8 @@ public final class ToastUtils {
      * @param text     文本
      * @param duration 显示时长
      */
+
+    //todo 这里获取AppContext有问题
     private static void show(CharSequence text, int duration) {
         cancel();
         boolean isCustom = false;
