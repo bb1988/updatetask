@@ -1,16 +1,13 @@
 package com.tytzy.network;
 
-import android.app.Activity;
 import android.content.Context;
 
 import com.tytzy.network.gson.GsonSerializer;
 import com.tytzy.network.interceptor.DownloadProgressInterceptor;
 import com.tytzy.network.listener.DownloadProgressListener;
 import com.tytzy.network.observer.DownLoadObserver;
-import com.tytzy.network.response.BaseResponse;
 import com.tytzy.network.scalars.ScalarsConverterFactory;
 
-import org.reactivestreams.Subscription;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,7 +17,6 @@ import java.util.concurrent.TimeUnit;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleOwner;
 import autodispose2.AutoDispose;
-import autodispose2.AutoDisposeConverter;
 import autodispose2.androidx.lifecycle.AndroidLifecycleScopeProvider;
 import hu.akarnokd.rxjava3.retrofit.RxJava3CallAdapterFactory;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;

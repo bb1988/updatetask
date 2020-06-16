@@ -33,18 +33,9 @@ import utils.LogUtils;
  * 时间: 2020/5/23 10:38 AM
  * 版权: Copyright © 2020 BB Inc. All Rights Reserved
  * 描述: NetWork入口类，需在应用启动时装载
- * @param
  */
 
 public class NetWork {
-
-    /**
-     * 作者: 白勃
-     * 时间: 2020/5/23 10:38 AM
-     * 版权: Copyright © 2020 BB Inc. All Rights Reserved
-     * 描述:
-     * @param null
-     */
 
     //App上下文
     private Context context;

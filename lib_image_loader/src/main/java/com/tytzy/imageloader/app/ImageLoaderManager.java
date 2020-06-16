@@ -115,10 +115,9 @@ public class ImageLoaderManager {
                                 .map(new Function<Bitmap, Drawable>() {
                                     @Override
                                     public Drawable apply(Bitmap bitmap) {
-                                        Drawable drawable = new BitmapDrawable(group.getResources(),
+                                        return new BitmapDrawable(group.getResources(),
                                                 Utils.doBlur(res, 100, true)
                                         );
-                                        return drawable;
                                     }
                                 })
                                 .subscribeOn(Schedulers.io())

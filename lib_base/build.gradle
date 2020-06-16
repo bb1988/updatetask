@@ -43,4 +43,7 @@ dependencies {
     }
     annotationProcessor rootProject.depsLibs.aroutercompiler
 
+
+    implementation rootProject.depsLibs.eventbus
+
 }
