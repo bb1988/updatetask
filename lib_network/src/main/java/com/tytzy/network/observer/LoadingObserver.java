@@ -2,10 +2,9 @@ package com.tytzy.network.observer;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.util.Log;
 
-import com.alibaba.android.arouter.facade.annotation.Autowired;
 import com.alibaba.android.arouter.launcher.ARouter;
+import com.tytzy.base.toast.ToastUtils;
 import com.tytzy.base.ui.prograss.LoadingCancelListener;
 import com.tytzy.base.ui.prograss.LoadingDialog;
 import com.tytzy.network.ExceptionHandle;
@@ -15,7 +14,6 @@ import com.tytzy.network.response.ResponseThrowable;
 
 import io.reactivex.rxjava3.annotations.NonNull;
 import io.reactivex.rxjava3.observers.DisposableObserver;
-import utils.ToastUtils;
 
 
 /**
@@ -88,7 +86,7 @@ public abstract class LoadingObserver<T, E> extends DisposableObserver<T> implem
                 onResult(baseResponse.getData());
                 break;
             default:
-                ToastUtils.showShort("错误代码:", baseResponse.getCode());
+                ToastUtils.show("错误代码:", baseResponse.getCode());
                 break;
         }
     }
@@ -119,7 +117,7 @@ public abstract class LoadingObserver<T, E> extends DisposableObserver<T> implem
         }
         e.printStackTrace();
         ResponseThrowable rError = ExceptionHandle.handleException(e);
-//        ToastUtils.showShort(rError.message);
+        ToastUtils.show(rError.message);
 //        Log.e("onError",e.getMessage());
         unsubscribe();
     }

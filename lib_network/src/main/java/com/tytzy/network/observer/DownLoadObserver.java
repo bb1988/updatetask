@@ -1,11 +1,11 @@
 package com.tytzy.network.observer;
 
+import com.tytzy.base.toast.ToastUtils;
 import com.tytzy.network.ExceptionHandle;
 import com.tytzy.network.listener.DownloadProgressListener;
 import com.tytzy.network.response.ResponseThrowable;
 
 import io.reactivex.rxjava3.observers.DisposableObserver;
-import utils.ToastUtils;
 
 /**
  * 作者: 白勃
@@ -28,7 +28,7 @@ public abstract class DownLoadObserver<T> extends DisposableObserver<T> implemen
     public void onError(Throwable e) {
         unsubscribe();
         ResponseThrowable rError = ExceptionHandle.handleException(e);
-        ToastUtils.showShort(rError.message);
+        ToastUtils.show(rError.message);
     }
 
     @Override

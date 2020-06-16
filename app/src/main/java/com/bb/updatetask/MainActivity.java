@@ -7,7 +7,12 @@ import autodispose2.AutoDispose;
 import autodispose2.AutoDisposeConverter;
 import autodispose2.androidx.lifecycle.AndroidLifecycleScopeProvider;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.annotations.NonNull;
 import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.core.Observer;
+import io.reactivex.rxjava3.disposables.Disposable;
+import io.reactivex.rxjava3.functions.Consumer;
+import io.reactivex.rxjava3.functions.Function;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
@@ -20,6 +25,7 @@ import retrofit2.http.Streaming;
 import retrofit2.http.Url;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.ActivityManager;
 import android.content.Context;
@@ -54,6 +60,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity implements LoadingCancelListener {
     private Button button;
@@ -92,11 +99,6 @@ public class MainActivity extends AppCompatActivity implements LoadingCancelList
         button = findViewById(R.id.bottom);
         textView = findViewById(R.id.textview);
         requestPermission();
-        NetWork.init(this)
-                .baseUrl("http://192.168.10.248:8116")
-                .connectTimeout(10)
-                .withLog(true)
-                .go();
 
         File dir = new File(getExternalFilesDir(null).getAbsolutePath());
         if (!dir.exists()) {
@@ -143,6 +145,8 @@ public class MainActivity extends AppCompatActivity implements LoadingCancelList
                 .start();
     }
 
+
+    @SuppressLint("AutoDispose")
     public void clickAlert(View view){
 //        goToUpdateApk(MainActivity.this,"cn.com.codeteenager.accessibilityapp");
 //        Intent it = new Intent(this, DetecterActivity.class);
@@ -159,29 +163,26 @@ public class MainActivity extends AppCompatActivity implements LoadingCancelList
 //            }
 //        },file);
 
-        JSONObject obj = new JSONObject();
-        try {
-            obj.put("username", "张甜");
-            obj.put("password", "123456");
-            obj.put("imei", "357092061466849");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        //普通连接测试
-        RequestBody requestBody = RequestBody.create(obj.toString(),
-                MediaType.parse("Content-Type, application/json"));
-
-        login(new LoadingObserver<BaseResponse<UserInfoEntity>, UserInfoEntity>(this,true) {
-            @Override
-            public void onResult(UserInfoEntity t) {
-                Log.e("UserInfoEntity",t.getAvatar());
-                Log.e("UserInfoEntity",t.getInfoMap().getCity());
-            }
-        }, requestBody);
-
-
-//        loadingDialog.createLoadingDialog(this,"",this::onCancelProgress).show();
+//        JSONObject obj = new JSONObject();
+//        try {
+//            obj.put("username", "张甜");
+//            obj.put("password", "123456");
+//            obj.put("imei", "357092061466849");
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//
+//        //普通连接测试
+//        RequestBody requestBody = RequestBody.create(obj.toString(),
+//                MediaType.parse("Content-Type, application/json"));
+//
+//        login(new LoadingObserver<BaseResponse<UserInfoEntity>, UserInfoEntity>(this,true) {
+//            @Override
+//            public void onResult(UserInfoEntity t) {
+//                Log.e("UserInfoEntity",t.getAvatar());
+//                Log.e("UserInfoEntity",t.getInfoMap().getCity());
+//            }
+//        }, requestBody);
 
     }
 

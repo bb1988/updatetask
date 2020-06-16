@@ -1,4 +1,4 @@
-package utils;
+package com.tytzy.base.utils;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
